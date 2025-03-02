@@ -232,3 +232,8 @@ fabric.properties
 
 # macOS
 .DS_Store
+
+# IDEs
+.vs/
+.vscode/
+.idea/

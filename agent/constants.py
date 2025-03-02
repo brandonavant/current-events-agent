@@ -1,6 +1,8 @@
 import textwrap
 
 
+# System prompt that instructs the LLM about its role and response format
+# Used in all LLM interactions where action determination is needed
 SYSTEM_PROMPT: str = textwrap.dedent("""
     You are an AI reasoning engine that determines structured actions based on user input. You should adhere to the 
     following criteria when responding:
@@ -21,5 +23,4 @@ SYSTEM_PROMPT: str = textwrap.dedent("""
 
 LLM_ATTEMPT_LIMIT: int = 3
 LLM_RETRY_DELAY_IN_SECONDS: int = 1
-
 LLM_NAME = "gpt-4o-mini"

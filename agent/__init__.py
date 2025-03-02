@@ -1,3 +1,11 @@
+"""
+Current Events Agent Package
+
+A package that provides an intelligent agent capable of answering questions about 
+current events by fetching real-time data from external APIs and processing 
+user inquiries using natural language.
+"""
+
 from .config import Settings
 
 from .models import (

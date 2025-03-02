@@ -12,9 +12,14 @@ from .actions import AVAILABLE_ACTIONS
 
 def generate_thought_and_action(user_input: str) -> str:
     """
-    Presents the user's original input to the LLM, which will construct a structured payload (JSON) containing its thoughts on the request and the action it thinks should be taken.
-    :param user_input: The user's input.
-    :return: A structured JSON payload containing the AI's thoughts and the action it proposes.
+    Presents the user's original input to the LLM, which will construct a structured payload (JSON) 
+    containing its thoughts on the request and the action it thinks should be taken.
+    
+    Args:
+        user_input: The user's input text query
+        
+    Returns:
+        A structured JSON payload containing the AI's thoughts and the action it proposes
     """
     user_inquiry_prompt: str = textwrap.dedent(f"""
         Analyze the following user request and determine the next action that should be taken to fulfill their inquiry. The available actions are as follows:
@@ -55,6 +60,21 @@ def generate_thought_and_action(user_input: str) -> str:
 
 
 def process_user_inquiry(user_inquiry: str) -> ThoughtAndActionModel:
+    """
+    Processes a user inquiry by determining the appropriate action to take.
+    
+    Makes multiple attempts to generate a valid thought and action response,
+    with retries if parsing fails.
+    
+    Args:
+        user_inquiry: The user's text query
+        
+    Returns:
+        A model containing the AI's thought process and proposed action
+        
+    Raises:
+        RuntimeError: If unable to parse the LLM response after multiple attempts
+    """
     for attempt in range(LLM_ATTEMPT_LIMIT):
         result = generate_thought_and_action(user_inquiry)
         try:
@@ -67,6 +87,20 @@ def process_user_inquiry(user_inquiry: str) -> ThoughtAndActionModel:
 
 
 def generate_final_response(user_inquiry: str, thought_and_action: ThoughtAndActionModel, result: BaseModel) -> str:
+    """
+    Generates a human-readable response based on the action results.
+    
+    Takes the original user inquiry, the thought and action model, and the result
+    of the action, and prompts the LLM to create a natural language response.
+    
+    Args:
+        user_inquiry: The original user's text query
+        thought_and_action: The AI's thought process and selected action
+        result: The result data from executing the action
+        
+    Returns:
+        A natural language response summarizing the results
+    """
     final_response_prompt: str = textwrap.dedent(f"""
         The user has made the following inquiry:
         {user_inquiry}
@@ -96,6 +130,22 @@ def generate_final_response(user_inquiry: str, thought_and_action: ThoughtAndAct
 
 
 def invoke_action(user_inquiry: str, thought_and_action: ThoughtAndActionModel) -> str:
+    """
+    Executes the appropriate action based on the thought and action model.
+    
+    Dispatches to the correct handler based on the action name, executes the
+    action with the provided parameters, and generates a final response.
+    
+    Args:
+        user_inquiry: The original user's text query
+        thought_and_action: The AI's thought process and selected action
+        
+    Returns:
+        A natural language response to the user's inquiry
+        
+    Raises:
+        RuntimeError: If the thought_and_action is None or contains an unknown action
+    """
     if thought_and_action is None:
         raise RuntimeError("Encountered an unexpected error when calling LLM.")
 

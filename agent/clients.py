@@ -13,6 +13,18 @@ from .config import settings
 
 
 def get_weather(geo_info: GeoCodingResult) -> WeatherResult:
+    """
+    Retrieves current weather conditions from Open-Meteo API for a specified location.
+    
+    Args:
+        geo_info: Geographic location information containing latitude and longitude
+        
+    Returns:
+        Weather conditions for the specified location
+        
+    Raises:
+        ValueError: If the API does not return valid weather data
+    """
     url: str = (f"https://api.open-meteo.com/v1/forecast?latitude={geo_info.latitude}"
                 f"&longitude={geo_info.longitude}"
                 f"&current=temperature_2m,precipitation,windspeed_10m"
@@ -30,6 +42,15 @@ def get_weather(geo_info: GeoCodingResult) -> WeatherResult:
 
 
 def get_news(news_topic: str) -> NewsResult:
+    """
+    Retrieves news articles from NewsAPI based on a specific topic.
+    
+    Args:
+        news_topic: The topic to search for news articles
+        
+    Returns:
+        News articles related to the specified topic from the past day
+    """
     from_yesterday: datetime = datetime.datetime.now() - datetime.timedelta(days=1)
     from_yesterday_formatted = from_yesterday.strftime("%Y-%m-%d")
     url: str = f"https://newsapi.org/v2/everything"
@@ -49,6 +70,19 @@ def get_news(news_topic: str) -> NewsResult:
 
 
 def get_geo_info(action: GetWeatherAction) -> GeoCodingResult:
+    """
+    Converts a location (city, state/province, country) into geographic coordinates
+    using the Open-Meteo Geocoding API.
+    
+    Args:
+        action: Weather action containing the location parameters
+        
+    Returns:
+        Geographic coordinates for the specified location
+        
+    Raises:
+        ValueError: If the API cannot find the specified location
+    """
     city: str = action.parameters.city
     state_or_province: str = action.parameters.state_or_province
     country: str = action.parameters.country
